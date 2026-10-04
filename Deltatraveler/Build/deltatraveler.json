@@ -1,0 +1,12 @@
+{
+"companyName": "RynoGG",
+"productName": "DELTATRAVELER",
+"dataUrl": "deltatraveler.data.unityweb",
+"wasmCodeUrl": "deltatraveler.wasm.code.unityweb",
+"wasmFrameworkUrl": "deltatraveler.wasm.framework.unityweb",
+"TOTAL_MEMORY": 268435456,
+"graphicsAPI": ["WebGL 2.0", "WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Dark",
+"backgroundColor": "#000000"
+}
