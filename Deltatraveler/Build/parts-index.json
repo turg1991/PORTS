@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "maxFileSize": 10000000,
+  "files": {
+    "deltatraveler.data.unityweb": {
+      "name": "deltatraveler.data.unityweb",
+      "size": 153457235,
+      "sha256": "0b3af1b23101d8c10c5ea1e0bcdcb191562b6c039aefad1b0548fa8383203fef",
+      "parts": [
+        {
+          "name": "deltatraveler.data.unityweb.part1",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part2",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part3",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part4",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part5",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part6",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part7",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part8",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part9",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part10",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part11",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part12",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part13",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part14",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part15",
+          "size": 10000000
+        },
+        {
+          "name": "deltatraveler.data.unityweb.part16",
+          "size": 3457235
+        }
+      ]
+    }
+  }
+}
