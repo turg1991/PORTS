@@ -1,0 +1,11 @@
+{
+  "oneloader": true,
+  "_conflictResolutions": {},
+  "_deltaPreference": {},
+  "_autoUpdater": {
+    "check": "allow",
+    "askedYet": true,
+    "lastCheck": 1792287791940,
+    "lastCheckVersion": "1.5"
+  }
+}

@@ -1,0 +1,169 @@
+/* OMORI Web Port - Mod Manager Styles */
+
+/* Toggle Button */
+.wmm-toggle {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 2147483647;
+    background: rgba(10, 10, 14, 0.85);
+    color: #8fd0ff;
+    border: 1px solid #3a5a7a;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+/* Mod Manager Panel */
+.wmm-panel {
+    position: fixed;
+    top: 40px;
+    right: 8px;
+    z-index: 2147483647;
+    width: 340px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background: rgba(12, 12, 16, 0.96);
+    color: #eee;
+    border: 1px solid #3a5a7a;
+    border-radius: 6px;
+    padding: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
+    display: none;
+}
+
+/* Panel Title */
+.wmm-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #8fd0ff;
+}
+
+/* Drop Zone */
+.wmm-dropzone {
+    border: 2px dashed #446;
+    border-radius: 5px;
+    padding: 14px 8px;
+    text-align: center;
+    color: #9ab;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.wmm-dropzone:hover {
+    background: #182838;
+}
+
+/* Button Row */
+.wmm-btn-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+/* Buttons */
+.wmm-btn {
+    flex: 1;
+    background: #182838;
+    color: #cde;
+    border: 1px solid #3a5a7a;
+    border-radius: 4px;
+    padding: 5px 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.wmm-btn:hover {
+    background: #1f3348;
+}
+
+/* File Inputs (hidden) */
+.wmm-file-input {
+    display: none;
+}
+
+/* Status */
+.wmm-status {
+    font-size: 12px;
+    margin-bottom: 6px;
+    min-height: 16px;
+    white-space: pre-wrap;
+}
+
+/* Storage */
+.wmm-storage {
+    margin-bottom: 6px;
+}
+
+/* Mod List */
+.wmm-list {
+    margin-bottom: 8px;
+}
+
+/* Gate Screen (shown before game loads) */
+.wmm-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2147483647;
+    overflow-y: auto;
+    background: radial-gradient(circle at 50% 28%, #14141d 0%, #04040a 72%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #eee;
+}
+
+/* Gate Logo */
+.wmm-gate-logo {
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    color: #8fd0ff;
+}
+
+/* Gate Subtitle */
+.wmm-gate-subtitle {
+    font-size: 12px;
+    color: #9ab;
+    margin: 4px 0 12px;
+}
+
+/* Start Button */
+.wmm-start-btn {
+    margin-top: 14px;
+    background: #1d5c86;
+    color: #fff;
+    border: 1px solid #4aa3dd;
+    border-radius: 5px;
+    padding: 10px 30px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.wmm-start-btn:hover {
+    background: #246a9a;
+}
+
+/* Gate Note */
+.wmm-gate-note {
+    font-size: 11px;
+    color: #7788;
+    margin-top: 8px;
+    max-width: 460px;
+    text-align: center;
+}

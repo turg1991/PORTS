@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMORI Web Port</title>
+    <link rel="stylesheet" href="css/frontend.css">
+</head>
+<body>
+    <div class="container">
+
+        <!-- HOME SECTION -->
+        <section id="section-home" class="section is-active is-visible">
+            <div class="logo-container">
+                <img src="img/omori_logo.png" alt="OMORI Logo" class="logo">
+                <div class="logo-caption">web port</div>
+            </div>
+            <div class="button-container">
+                <button class="btn" onclick="window.location.href='game.html'">Play</button>
+                <button class="btn" data-nav="mods">Mods</button>
+            </div>
+            <div class="bottom-image-wrap">
+                <img src="img/omori.png" alt="OMORI" class="bottom-image">
+            </div>
+        </section>
+
+        <!-- MODS SECTION -->
+        <section id="section-mods" class="section">
+            <div class="mods-header">
+                <button class="btn btn-small" data-nav="home">&larr; Back</button>
+                <h1 class="section-title">Mods</h1>
+            </div>
+
+            <div class="mods-placeholder">
+                <p class="placeholder-title">Mod support is coming soon</p>
+                <p class="placeholder-text">
+                    This page will be powered by a custom <strong>mods.one</strong> API, which will fetch and download any mod you wish from their vast library.
+                </p>
+                <p class="placeholder-note">
+                    Mod support is currently in beta, so don't be surprised if a mod runs broken in the web build.
+                </p>
+            </div>
+
+            <div class="button-container">
+                <button class="btn" onclick="window.location.href='game.html'">Launch Mod</button>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        (function() {
+            var FADE_MS = 320;
+            var sections = {
+                home: document.getElementById('section-home'),
+                mods: document.getElementById('section-mods')
+            };
+            var current = 'home';
+
+            function show(name, immediate) {
+                if (!sections[name] || name === current) { return; }
+                var outgoing = sections[current];
+                var incoming = sections[name];
+
+                function swap() {
+                    outgoing.classList.remove('is-active', 'is-visible');
+                    incoming.classList.add('is-active');
+                    // next frame so the browser registers display:block before
+                    // the opacity transition starts
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() {
+                            incoming.classList.add('is-visible');
+                        });
+                    });
+                    current = name;
+                    if (history.replaceState) {
+                        history.replaceState(null, '', name === 'mods' ? '#mods' : '#');
+                    }
+                }
+
+                if (immediate) {
+                    swap();
+                } else {
+                    outgoing.classList.remove('is-visible');
+                    setTimeout(swap, FADE_MS);
+                }
+            }
+
+            // Buttons / links that switch sections
+            document.addEventListener('click', function(ev) {
+                var trigger = ev.target.closest('[data-nav]');
+                if (!trigger) { return; }
+                ev.preventDefault();
+                show(trigger.getAttribute('data-nav'));
+            });
+
+            // Deep link support (index.html#mods opens the mods section)
+            if (location.hash === '#mods') {
+                current = 'home';
+                show('mods', true);
+            }
+
+            window.addEventListener('hashchange', function() {
+                show(location.hash === '#mods' ? 'mods' : 'home');
+            });
+        })();
+    </script>
+</body>
+</html>
