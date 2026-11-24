@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twilight Monk</title>
+<style>
+  @font-face {
+    font-family: "Mochi Boom";
+    src: url("/assets/fonts/Mochi%20Boom%20DEMO.ttf") format("truetype");
+    font-display: swap;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  /* raziel slides in from the right toward his resting spot */
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(12vw); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  /* the logo keeps its -50% centring offset while fading */
+  @keyframes logoIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    background-image: url("/assets/paper.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #e8dcc0;
+  }
+  #raziel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: auto;
+    pointer-events: none;
+    user-select: none;
+    animation: slideInRight 1.1s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  #logo {
+    position: fixed;
+    top: 6vh;
+    /* raziel.png's artwork starts 54.7% into the image, and the image is
+       1.7451x its height wide, anchored right -> center of the free paper area. */
+    left: calc((100vw - 79.1vh) / 2);
+    transform: translateX(-50%);
+    width: clamp(180px, 30vw, 620px);
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+    animation: logoIn 0.9s ease-out 0.15s both;
+  }
+  #play {
+    position: fixed;
+    /* same horizontal centre as the logo, but vertically centred */
+    left: calc((100vw - 79.1vh) / 2);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: "Mochi Boom", sans-serif;
+    font-size: clamp(32px, 4vw, 76px);
+    letter-spacing: 0.08em;
+    color: #000000;
+    text-decoration: none;
+    white-space: nowrap;
+    animation: fadeIn 0.9s ease-out 0.5s both;
+  }
+  #credits {
+    position: fixed;
+    left: 1.2vw;
+    bottom: 1.2vh;
+    display: flex;
+    flex-direction: column;
+    font-family: "Mochi Boom", sans-serif;
+    font-size: clamp(15px, 1.5vw, 26px);
+    line-height: 1.25;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    user-select: none;
+  }
+  #credits a {
+    color: inherit;
+    text-decoration: none;
+    width: fit-content;
+  }
+  #credits a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+  <div id="credits">
+    <a href="https://turg.netlify.app" target="_blank" rel="noopener noreferrer">web port by turg</a>
+    <a href="https://github.com/T4ctica1YT/UEWASM" target="_blank" rel="noopener noreferrer">made with UEWASM</a>
+  </div>
+  <a id="play" href="/play.html">play</a>
+  <img id="logo" src="/assets/logo.webp?v=1" alt="Twilight Monk">
+  <img id="raziel" src="/assets/raziel.png?v=2" alt="">
+</body>
+</html>

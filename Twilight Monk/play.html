@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twilight Monk</title>
+<link rel="icon" href="favicon.ico">
+<style>
+  @font-face {
+    font-family: "Mochi Boom";
+    src: url("/assets/fonts/Mochi%20Boom%20DEMO.ttf") format("truetype");
+    font-display: swap;
+  }
+  :root {
+    color-scheme: dark;
+    --pad: 2vh;
+    --gap: 1.8vh;
+    /* raziel post.png is 456x547; its opaque artwork spans 27.2%..76.1% of the image width,
+       which is where its own right padding gets pulled off the edge */
+    --raziel-shift: 19.92vh;
+    --raziel-art-w: 40.8vh;
+    /* paper kept to the right of the game column: the artwork's own right edge stops there */
+    --raziel-gutter: 3vh;
+    /* how far the artwork rides over the game window's right edge */
+    --raziel-overlap: 7vh;
+    /* lift the PNG so its empty top padding goes off-page, leaving the bottom-right corner free */
+    --raziel-up: 20vh;
+    --logh: 20vh;
+  }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body {
+    background-image: url("/assets/paper.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-color: #e8dcc0;
+  }
+  /* left column: the game window, with the log pane under it */
+  #left {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    /* leave the paper on the right free for the artwork */
+    width: calc(100vw - var(--raziel-art-w) - var(--raziel-gutter));
+    padding: var(--pad) 0 var(--pad) var(--pad);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+  #stage {
+    position: relative;
+    /* never taller than what leaves the log its --logh, however wide the window is */
+    width: min(100%, calc((100vh - 2 * var(--pad) - var(--gap) - var(--logh)) * 16 / 9));
+    aspect-ratio: 16 / 9;
+    flex: none;
+    background: #000;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+  canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; outline: none; }
+  #status { position: absolute; left: 16px; bottom: 12px; font: 13px system-ui, sans-serif; color: #9a9a9a; pointer-events: none; }
+  #fps { position: absolute; left: 8px; top: 6px; font: 600 13px ui-monospace, Consolas, monospace; color: #e8e8e8; background: #000a;
+         padding: 2px 6px; border-radius: 4px; pointer-events: none; display: none; }
+  /* console log under the game window */
+  #console {
+    flex: 1 1 auto;
+    min-height: var(--logh);
+    display: flex;
+    flex-direction: column;
+    background: rgba(24, 21, 16, 0.82);
+    border: 1px solid rgba(232, 220, 192, 0.35);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  #console h2 {
+    margin: 0;
+    padding: 4px 10px;
+    font: 600 11px/1.6 ui-monospace, Consolas, monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #b9ae99;
+    background: rgba(0, 0, 0, 0.28);
+    border-bottom: 1px solid rgba(232, 220, 192, 0.18);
+  }
+  #log { flex: 1 1 auto; min-height: 0; padding: 6px 10px 8px; overflow-y: auto; font: 12px/1.45 ui-monospace, Consolas, monospace; color: #d9d2c4; white-space: pre-wrap; word-break: break-word; }
+  #log .warn { color: #e8c56a; }
+  #log .error { color: #f08a7a; }
+  #log::-webkit-scrollbar { width: 8px; }
+  #log::-webkit-scrollbar-thumb { background: rgba(232, 220, 192, 0.28); border-radius: 4px; }
+  /* corner text in the space the artwork leaves under it */
+  #credits {
+    position: fixed;
+    right: 1.2vw;
+    bottom: 1.2vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    font-family: "Mochi Boom", sans-serif;
+    font-size: clamp(15px, 1.5vw, 26px);
+    line-height: 1.25;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    user-select: none;
+  }
+  #credits a {
+    color: inherit;
+    text-decoration: none;
+    width: fit-content;
+  }
+  #credits a:hover {
+    text-decoration: underline;
+  }
+  #raziel {
+    position: fixed;
+    top: 0;
+    /* the PNG has 24% empty padding on its right: line its artwork up with the game window's right edge,
+       riding --raziel-overlap over it */
+    right: calc(var(--raziel-gutter) + var(--raziel-overlap) - var(--raziel-shift));
+    top: calc(-1 * var(--raziel-up));
+    height: 100vh;
+    width: auto;
+    /* above the game window, which the artwork rides over */
+    z-index: 2;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<div id="left">
+  <div id="stage">
+    <canvas id="canvas" width="1280" height="720" tabindex="0"></canvas>
+    <div id="status">Loading…</div>
+    <div id="fps"></div>
+  </div>
+  <div id="console">
+    <h2>console</h2>
+    <div id="log"></div>
+  </div>
+</div>
+<img id="raziel" src="/assets/raziel%20post.png" alt="">
+<div id="credits">
+  <a href="https://turg.netlify.app" target="_blank" rel="noopener noreferrer">web port by turg</a>
+  <a href="https://github.com/T4ctica1YT/UEWASM" target="_blank" rel="noopener noreferrer">made with UEWASM</a>
+</div>
+<script>
+  // console panel: mirrors everything the page and the game log
+  window.uewLog = (() => {
+    const log = document.getElementById("log");
+    const MAX = 400;
+    const add = (cls, text) => {
+      const line = document.createElement("div");
+      if (cls) line.className = cls;
+      line.textContent = text;
+      log.appendChild(line);
+      while (log.childElementCount > MAX) log.removeChild(log.firstChild);
+      log.scrollTop = log.scrollHeight;
+    };
+    const fmt = a => a.map(v => {
+      if (typeof v === "string") return v;
+      if (v instanceof Error) return v.stack || v.message;
+      try { return JSON.stringify(v); } catch (e) { return String(v); }
+    }).join(" ");
+    for (const [level, cls] of [["log", ""], ["info", ""], ["warn", "warn"], ["error", "error"]]) {
+      const orig = console[level].bind(console);
+      console[level] = (...a) => { orig(...a); add(cls, fmt(a)); };
+    }
+    addEventListener("error", e => add("error", "Uncaught " + (e.message || e.error)));
+    addEventListener("unhandledrejection", e => add("error", "Unhandled rejection: " + ((e.reason && (e.reason.message || e.reason)) || e.reason)));
+    return add;
+  })();
+</script>
+<script>
+  // render size, read once by the game at start: "native" (--resolution native, or ?res=native) draws at the game
+  // window's own pixel count instead of a fixed size the page scales up, so text and UI stay sharp; ?res=WxH picks a size
+  (() => {
+    const c = document.getElementById("canvas");
+    const want = new URLSearchParams(location.search).get("res") || "native";
+    let w = 0, h = 0;
+    if (want === "native") {
+      const d = Math.min(window.devicePixelRatio || 1, 3);
+      // measure the CSS box the canvas actually gets, not the whole browser window
+      const box = c.getBoundingClientRect();
+      w = (box.width || innerWidth || 1280) * d; h = (box.height || innerHeight || 720) * d;
+      const s = Math.min(1, 3840 / w, 2160 / h);
+      w = Math.round(w * s); h = Math.round(h * s);
+    } else {
+      const m = /^(\d{3,5})x(\d{3,5})$/.exec(want);
+      if (m) { w = +m[1]; h = +m[2]; }
+    }
+    if (w >= 320 && h >= 200) {
+      // multiples of 8: Unreal Engine 3 rounds its depth buffer up to 8 pixels, and D3D11 draws to a smaller back
+      // buffer with it while WebGPU wants attachments of one size (at 1600x900 every frame failed: depth 1600x904)
+      w &= ~7; h &= ~7;
+      c.width = w; c.height = h;
+      // Unreal Engine 3 takes its render size from its settings files (Rocket League: 1280x720) unless the command line
+      // gives one
+      window.uewResArgs = [`-ResX=${w}`, `-ResY=${h}`];
+    }
+  })();
+</script>
+<script>
+  // frame counter: Ctrl+Shift+F toggles it (remembered), ?fps=1 or ?fps=0 in the address overrides
+  (() => {
+    const el = document.getElementById("fps");
+    let on = false;
+    try { const v = localStorage.getItem("uewFps"); if (v !== null) on = v === "1"; } catch (e) {}
+    const q = new URLSearchParams(location.search).get("fps");
+    if (q !== null) on = q !== "0";
+    const show = () => { el.style.display = on ? "block" : "none"; };
+    show();
+    addEventListener("keydown", e => {
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyF") {
+        on = !on; show();
+        try { localStorage.setItem("uewFps", on ? "1" : "0"); } catch (err) {}
+        e.preventDefault(); e.stopImmediatePropagation();
+      }
+    }, true);
+    let last = performance.now(), frames = 0, worst = 0, prev = 0, prevT = last;
+    const tick = now => {
+      const n = (window.Module && Module.uewPresents) || 0;
+      if (n !== prev) { worst = Math.max(worst, now - prevT); prev = n; prevT = now; }
+      if (now - last >= 500) {
+        const fps = (n - frames) * 1000 / (now - last);
+        if (on) el.textContent = `${fps.toFixed(0)} FPS  ${fps ? (1000 / fps).toFixed(1) : "-"} ms  worst ${worst.toFixed(0)} ms`;
+        frames = n; last = now; worst = 0;
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  })();
+</script>
+<script>
+  const status = document.getElementById("status");
+  const parts = ["game.wasm.0","game.wasm.1","game.wasm.2","game.wasm.3","game.wasm.4","game.wasm.5","game.wasm.6","game.wasm.7","game.wasm.8","game.wasm.9","game.wasm.10","game.wasm.11","game.wasm.12","game.wasm.13","game.wasm.14"];
+  // the log pane already gets everything the game prints; the loading lines are page messages, so send them there too
+  const setStatus = t => {
+    if (!t) { status.textContent = ""; return; }
+    status.textContent = t;
+    if (!/^Loading code/.test(t)) uewLog("", t);
+  };
+  var Module = {
+    canvas: document.getElementById("canvas"),
+    arguments: ["--image","/image.bin","--root","/game","--save","/save/TM_UE4-Win64-Shipping","--exe","TM_UE4/Binaries/Win64/TM_UE4-Win64-Shipping.exe","-dx11"].concat(window.uewResArgs || [], new URLSearchParams(location.search).getAll("arg")),
+    uewSave: "/save/TM_UE4-Win64-Shipping",
+    uewSeed: {},
+    uewAsyncShaders: true,
+    uewDebugPanel: true,
+    uewNetPlaceholders: false,
+    uewCacheMB: 682,
+    uewGpuMB: 3738,
+    uewSteam: {"mode":"webworks","relay":false,"url":null,"versions":["STEAMAPPLIST_INTERFACE_VERSION001","STEAMAPPS_INTERFACE_VERSION008","STEAMHTTP_INTERFACE_VERSION003","STEAMINVENTORY_INTERFACE_V003","STEAMMUSICREMOTE_INTERFACE_VERSION001","STEAMPARENTALSETTINGS_INTERFACE_VERSION001","STEAMREMOTEPLAY_INTERFACE_VERSION001","STEAMREMOTESTORAGE_INTERFACE_VERSION014","STEAMSCREENSHOTS_INTERFACE_VERSION003","STEAMUGC_INTERFACE_VERSION015","STEAMUSERSTATS_INTERFACE_VERSION012","STEAMVIDEO_INTERFACE_V002","SteamClient017","SteamClient020","SteamController008","SteamFriends017","SteamGameServer013","SteamGameServerStats001","SteamInput002","SteamMatchGameSearch001","SteamMatchMaking009","SteamMatchMakingServers002","SteamNetworking006","SteamNetworkingMessages002","SteamNetworkingSockets009","SteamNetworkingUtils003","SteamParties002","SteamUser021","SteamUtils010"]},
+    uewWisp: {},
+    print: t => console.log(t),
+    printErr: t => console.log(t),
+    setStatus: setStatus,
+    onRuntimeInitialized: () => { setStatus(""); uewLog("", "runtime ready"); },
+  };
+  if (parts.length) {
+    // the parts download together and are fed in order to a streaming compile, which runs while they arrive
+    Module.instantiateWasm = (imports, done) => {
+      let got = 0;
+      const res = parts.map(u => fetch(u));
+      const body = new ReadableStream({
+        async start(ctl) {
+          for (let i = 0; i < res.length; i++) {
+            const r = await res[i];
+            if (!r.ok) throw new Error(`HTTP ${r.status} for ${parts[i]}`);
+            const rd = r.body.getReader();
+            for (;;) {
+              const { done: end, value } = await rd.read();
+              if (end) break;
+              got += value.length;
+              status.textContent = `Loading code ${Math.round(got / 1048576)} MB`;
+              ctl.enqueue(value);
+            }
+          }
+          setStatus("Compiling…");
+          ctl.close();
+        }
+      });
+      WebAssembly.instantiateStreaming(new Response(body, { headers: { "Content-Type": "application/wasm" } }), imports)
+        .then(r => done(r.instance, r.module))
+        .catch(e => { setStatus("Failed to load: " + e.message); });
+      return {};
+    };
+  }
+</script>
+<script>
+  // real threads: start once the page is cross-origin isolated (headers from the host, or coi-sw.js)
+  if (self.crossOriginIsolated) document.write('<script src="game.js"><\/script>');
+  else if (navigator.serviceWorker && window.isSecureContext) {
+    setStatus("Setting up threads…");
+    navigator.serviceWorker.register("coi-sw.js").then(() => navigator.serviceWorker.ready).then(() => {
+      if (sessionStorage.getItem("uewCoi") === location.href) setStatus("This host blocks the isolation real threads need; rebuild with cooperative threads.");
+      else { sessionStorage.setItem("uewCoi", location.href); location.reload(); }
+    });
+  } else setStatus("Real threads need https (or localhost) to run.");
+</script>
+</body>
+</html>

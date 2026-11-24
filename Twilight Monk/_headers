@@ -1,0 +1,10 @@
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+
+/game.wasm*
+  Content-Type: application/wasm
+
+/data/*
+  Content-Type: application/octet-stream
+  Cache-Control: public, max-age=3600, must-revalidate
